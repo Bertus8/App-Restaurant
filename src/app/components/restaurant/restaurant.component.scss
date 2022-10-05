@@ -1,0 +1,20 @@
+ion-item {
+    font-size: 0.8rem;
+    ion-thumbnail{
+        height: 16vh;
+        width: 25vw;
+        img{
+            height: 100%;
+            width: 100%;
+            border-radius: 5px;
+        }
+    }
+}
+.distance{
+    font-size: 0.8rem;
+    padding-top: 0.6vh;
+}
+.pStyle{
+    padding-bottom: 0.5vh;
+    font-size: 0.82rem !important;
+}
