@@ -1,0 +1,21 @@
+<ion-grid>
+  <ion-row>
+    <ion-col class="ion-text-center">
+      <ion-icon 
+      [name]="model?.icon ? model?.icon :''"
+      [color]="model?.color ? model.color : 'danger'">
+    </ion-icon>
+
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col class="ion-text-center">
+      <ion-label>
+        {{model?.title ? model.title : 'Your cart is Empty'}}
+      </ion-label>
+      <ion-text *ngIf="model?.subTitle">
+        <p>{{ model.subtitle }}</p>
+      </ion-text>
+    </ion-col>
+  </ion-row>
+</ion-grid>

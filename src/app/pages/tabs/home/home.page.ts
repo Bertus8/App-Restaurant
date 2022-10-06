@@ -25,6 +25,7 @@ setTimeout(() => {
   ];
   this.restaurants = [
     {
+      uid:'1.1',
       cover: 'assets/imgs/1.jpg',
       name: 'Stayfit',
       short_name: 'stayfit',
@@ -38,6 +39,7 @@ setTimeout(() => {
       price: 100
     },
     {
+      uid:'2.1',
       cover: 'assets/imgs/2.jpg',
       name: 'Stayfit1',
       short_name: 'stayfit1',
@@ -51,6 +53,7 @@ setTimeout(() => {
       price: 100
     },
     {
+      uid:'3.1',
       cover: 'assets/imgs/3.jpg',
       name: 'Stayfit2',
       short_name: 'stayfit2',

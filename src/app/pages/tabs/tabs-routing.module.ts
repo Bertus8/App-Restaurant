@@ -25,6 +25,10 @@ const routes: Routes = [
         loadChildren: () => import('./account/account.module').then( m => m.AccountPageModule)
       },
       {
+        path: 'restaurants/:restaurantId',
+        loadChildren: () => import('./items/items.module').then( m => m.ItemsPageModule)
+      },
+      {
         path: '',
         redirectTo: 'tabs/home',
         pathMatch: 'full'

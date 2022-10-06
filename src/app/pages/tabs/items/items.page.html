@@ -1,0 +1,26 @@
+<ion-header>
+  <ion-toolbar mode="md">
+    <ion-title>Items</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/home">
+
+      </ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+    <ion-grid *ngIf="data?.name">
+      <ion-row class="ionpadding-horizontal">
+        <ion-label>
+        <h1>{{data?.name}}</h1>
+        <ion-text *ngIf="data?.cuisines">
+          <p>{{getCuisine(data.cuisine)}}</p>
+        </ion-text>
+        <p>{{data?.address}}</p>
+      </ion-label>
+      </ion-row>
+    </ion-grid>
+
+</ion-content>
