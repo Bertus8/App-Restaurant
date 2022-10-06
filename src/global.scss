@@ -58,6 +58,10 @@ h6 {
     border-bottom: 1.5vh solid var(--ion-color-light);
 }
 
+.borderBottomSmall {
+    border-bottom: 0.1rem solid var(--ion-color-light);
+}
+
 .swiper-pagination-bullet {
     background-color: var(--ion-color-primary);
 }

@@ -17,7 +17,7 @@ export class SearchPage implements OnInit {
   query: any;
   allRestaurants: any[] = [
   {
-    uid:'1.1',
+    uid:'1A',
     cover: 'assets/imgs/1.jpg',
     name: 'Stayfit',
     short_name: 'stayfit',
@@ -31,7 +31,7 @@ export class SearchPage implements OnInit {
     price: 100
   },
   {
-    uid:'2.1',
+    uid:'2B',
     cover: 'assets/imgs/2.jpg',
     name: 'Stayfit1',
     short_name: 'stayfit1',
@@ -45,7 +45,7 @@ export class SearchPage implements OnInit {
     price: 100
   },
   {
-    uid:'3.1',
+    uid:'3C',
     cover: 'assets/imgs/3.jpg',
     name: 'Stayfit2',
     short_name: 'stayfit2',
