@@ -70,9 +70,29 @@ export class CartPage implements OnInit {
     return this.url.join('/');
   }
 
-  quantityPlus(index) {}
+  quantityPlus(index) {
+    try {
+      console.log(this.model.items[index]);
+      if(!this.model.items[index].quantity || this.model.items[index].quantity == 0) {
+        this.model.items[index].quantity = 1;
+        this.calculate();
+      } else {
+        this.model.items[index].quantity += 1; 
+        this.calculate();
+      }
+    } catch(e) {
+      console.log(e);
+    }
+  }
 
-  quantityMinus(index) {}
+  quantityMinus(index) {
+    if(this.model.items[index].quantity !== 0) {
+      this.model.items[index].quantity -= 1; 
+    } else {
+      this.model.items[index].quantity = 0;
+    }
+    this.calculate();
+  }
 
   checkUrl(){
     let url: any = (this.router.url).split('/');
