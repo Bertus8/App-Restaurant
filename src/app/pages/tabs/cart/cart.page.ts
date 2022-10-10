@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Preferences } from '@capacitor/preferences';
+import { IonContent } from '@ionic/angular';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-cart',
@@ -9,10 +11,13 @@ import { Preferences } from '@capacitor/preferences';
 })
 export class CartPage implements OnInit {
   
+  @ViewChild(IonContent, {static: false}) content: IonContent;
   urlCheck: any;
   url: any;
   model: any;
   deliveryCharge = 20;
+  instruction: any;
+  location: any = {};
   
 
 
@@ -22,14 +27,19 @@ export class CartPage implements OnInit {
 
   ngOnInit() {
     this.checkUrl();
-    this.getCartData();
+    this.getModel();
 
   }
   getCart() {
     return Preferences.get({key: 'cart'});
   }
-  async getCartData() {
+  async getModel() {
     let data: any = await this.getCart();
+    this.location = {
+      lat: 39.4748446276339, 
+      Ing: -0.3790224001082603,
+      address: 'Karol Bagh, New Delhi'
+    }
     if(data?.value){
       this.model = await JSON.parse(data.value);
       console.log(this.model);
@@ -108,7 +118,29 @@ export class CartPage implements OnInit {
   changeAddress() {}
 
   makePayment() {
-    console.log('make payment');
+    try {
+      const data = {
+        restaurant_id: this.model.restaurant.id,
+        res: this.model.restaurant,
+        order: JSON.stringify(this.model.items),
+        time: moment().format('111'),
+        address: this.location,
+        total: this.model.totalPrice,
+        grandTotal: this.model.grandTotal,
+        deliveryCharge:  this.deliveryCharge,
+        status: 'Created',
+        paid: 'COD'
+      }
+      console.log('order: ', data );
+    } catch (e) {
+      console.log(e);
+    }
+    
   }
+
+  scrollToBottom() {
+    this.content.scrollToBottom(500);
+  }
+
 
 }
