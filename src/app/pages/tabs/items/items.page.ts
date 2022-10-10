@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { Preferences } from '@capacitor/preferences';
+import { ApiService } from 'src/app/services/api/api.service';
 
 @Component({
   selector: 'app-items',
@@ -21,114 +22,15 @@ export class ItemsPage implements OnInit {
     icon: 'fast-food-outline',
     title: 'No Menu Available',
   };
-
-  restaurants = [
-    {
-      uid:'1A',
-      cover: 'assets/imgs/1.jpg',
-      name: 'Stayfit',
-      short_name: 'stayfit',
-      address: 'Karol Bagh, New Delhi',
-      cuisines: [
-        'Italian',
-        'Mexican'
-      ],
-      rating: 5,
-      delivery_time: 25,
-      distance: 2.5,
-      price: 100
-    },
-    {
-      uid:'2B',
-      cover: 'assets/imgs/2.jpg',
-      name: 'Stayfit1',
-      short_name: 'stayfit1',
-      address: 'Karol Bagh, New Delhi',
-      cuisines: [
-        'Italian',
-        'Mexican'
-      ],
-      rating: 5,
-      delivery_time: 25,
-      distance: 2.5,
-      price: 100
-    },
-    {
-      uid:'3C',
-      cover: 'assets/imgs/3.jpg',
-      name: 'Stayfit2',
-      short_name: 'stayfit2',
-      address: 'Karol Bagh, New Delhi',
-      cuisines: [
-        'Italian',
-        'Mexican'
-      ],
-      rating: 5,
-      delivery_time: 25,
-      distance: 2.5,
-      price: 100
-    },
-  ];
-
-  categories: any[] = [
-    {
-      id: "e00",
-      name: "Italian",
-      uid: "12wefdss"
-    },
-    {
-      id: "e0",
-      name: "Mexican",
-      uid: "12wefdss"
-    },
-  ]; 
-
-  allItems = [
-    {
-        category_id: "e00",
-        cover: "assets/imgs/pizza.jpg",
-        desc: "Great in taste",
-        id: "i1",
-        name: "Pizza",
-        price: 120,
-        rating: 0,
-        status: true,
-        uid: "12wefdss",
-        variation: false,
-        veg: false
-    },
-    {
-        category_id: "e0",
-        cover: "assets/imgs/salad.jpg",
-        desc: "Great in taste",
-        id: "i2",
-        name: "Caprese Salad",
-        price: 200,
-        rating: 0,
-        status: true,
-        uid: "12wefdss",
-        variation: false,
-        veg: true
-    },
-    {
-        category_id: "e00",
-        cover: "assets/imgs/pasta.jpg",
-        desc: "Great in taste",
-        id: "i3",
-        name: "Pasta",
-        price: 150,
-        rating: 0,
-        status: true,
-        uid: "12wefdss",
-        variation: false,
-        veg: false
-    },
-  ];
+  restaurants = [];
+  categories: any[] = []; 
+  allItems = [];
 
   constructor(
     private navCtrl: NavController,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private api: ApiService
   ) { }
 
   ngOnInit() {
@@ -140,6 +42,9 @@ export class ItemsPage implements OnInit {
       }
       this.id = paramMap.get('restaurantId');
       console.log('id:', this.id);
+      this.restaurants = this.api.restaurants1;
+      this.categories = this.api.categories;
+      this.allItems = this.api.allItems;
       this.getItems();
     });
   }
