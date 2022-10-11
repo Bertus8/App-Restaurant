@@ -15,6 +15,8 @@
     <ion-spinner color="primary"></ion-spinner>
   </div>
 
+  <app-empty-screen *ngIf="!isLoading && addresses?.length == 0" [model]="model"></app-empty-screen>
+
 
   <ion-item-divider>SAVED ADDRESSES</ion-item-divider>
   <ion-list *ngIf="!isLoading && addresses?.length > 0">
@@ -30,8 +32,8 @@
             </p>
           </ion-text>
           <ion-row>
-            <ion-button fill="clear" color="primary" (click)="editAddress()">EDIT</ion-button>
-            <ion-button fill="clear" color="primary" (click)="deleteAddress()">DELETE</ion-button>
+            <ion-button fill="clear" color="primary" (click)="editAddress(address)">EDIT</ion-button>
+            <ion-button fill="clear" color="primary" (click)="deleteAddress(address)">DELETE</ion-button>
           </ion-row>
         </ion-label>
       </ion-item>

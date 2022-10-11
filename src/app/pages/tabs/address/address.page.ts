@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { AddressService } from 'src/app/services/address/address.service';
 import { GlobalService } from 'src/app/services/global/global.service';
 
 @Component({
@@ -6,45 +8,86 @@ import { GlobalService } from 'src/app/services/global/global.service';
   templateUrl: './address.page.html',
   styleUrls: ['./address.page.scss'],
 })
-export class AddressPage implements OnInit {
+export class AddressPage implements OnInit, OnDestroy {
 
   isLoading: boolean;
-  addresses: any[] =[];
+  addresses: any[] = [];
+  addressesSub: Subscription;
+  model: any = {
+    title: 'No Addresses added yet',
+    icon: 'location-outline'
+  };
 
-
-  constructor(private global: GlobalService) { }
+  constructor(
+    private global: GlobalService,
+    private addressService: AddressService) { }
 
   ngOnInit() {
+    this.addressesSub = this.addressService.addresses.subscribe(address => {
+      console.log('addresses: ', address);
+      if(address instanceof Array) {
+        this.addresses = address;
+      } else {
+        if(address?.delete) {
+          this.addresses = this.addresses.filter(x => x.id != address.id);
+        } else if(address?.update) {
+          const index = this.addresses.findIndex(x => x.id == address.id);
+          this.addresses[index] = address;
+        } else {
+          this.addresses = this.addresses.concat(address);
+        }
+      }
+    });
     this.getAddresses();
   }
 
-  getAddresses() {
+  async getAddresses() {    
     this.isLoading = true;
     this.global.showLoader();
-    setTimeout(() => {
-      this.addresses = [      
-        {address: "Fancy Bazaar, India", house: "2nd Floor", id: "7Kox63KlggTvV7ebRKar", landmark: "Fancy Bazar", lat: 26.1830738, lng: 91.74049769999999, title: "Fancy", user_id: "1"},
-        {address: "Kanuat palace, India", house: "Ground Floor", id: "8Kox63KlggTvV7ebRKar", landmark: "Bazar", lat: 26.1830738, lng: 91.74049769999999, title: "Work", user_id: "1"},
-        {address: "Kanuat palace, India", house: "Ground Floor", id: "8Kox63KlggTvV7ebRKar", landmark: "Bazar", lat: 26.1830738, lng: 91.74049769999999, title: "Home", user_id: "1"}
-      ];
+    setTimeout(async() => {
+      await this.addressService.getAddresses();
+      console.log(this.addresses);
       this.isLoading = false;
-      //this.global.successToast('Adresses retrieved successfully')
-      //this.global.errorToast()
-      //this.global.showAlert('Addresses retrieved', 'Addresses Page');
       this.global.hideLoader();
     }, 3000);
   }
 
   getIcon(title) {
     return this.global.getIcon(title);
-    }
-  
+  }
 
   editAddress(address) {
 
   }
 
-  deleteAddress(address){
+  deleteAddress(address) {
+    console.log('address: ', address);
+    this.global.showAlert(
+      'Are you sure you want to delete this address?',
+      'Confirm',
+      [
+        {
+          text: 'No',
+          role: 'cancel',
+          handler: () => {
+            console.log('cancel');
+            return;
+          }
+        },
+        {
+          text: 'Yes',
+          handler: async () => {
+            this.global.showLoader();
+            await this.addressService.deleteAddress(address);
+            this.global.hideLoader();
+          }
+        }
+      ]
+    )
+  }
 
+  ngOnDestroy() {
+    if(this.addressesSub) this.addressesSub.unsubscribe();
   }
 }
+
