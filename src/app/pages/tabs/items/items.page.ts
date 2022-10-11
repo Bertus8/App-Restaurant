@@ -40,7 +40,7 @@ export class ItemsPage implements OnInit {
         this.navCtrl.back();
         return;
       }
-      this.id = paramMap.get('restaurantId');
+     this.id = paramMap.get('restaurantId');
       console.log('id:', this.id);
       this.restaurants = this.api.restaurants1;
       this.categories = this.api.categories;
@@ -61,8 +61,8 @@ export class ItemsPage implements OnInit {
     setTimeout( () =>{ 
       let data: any = this.restaurants.filter(x => x.uid === this.id);
       this.data = data[0];
-      //this.categories = this.categories.filter(x => x.uid === this.id);
-      this.items = this.allItems;//.filter(x => x.uid === this.id);
+      this.categories = this.categories.filter(x => x.uid === this.id);
+      this.items = this.allItems.filter(x => x.uid === this.id);
       console.log('restaurant: ', this.data);
       let cart: any = this.getCart();
       console.log(cart);

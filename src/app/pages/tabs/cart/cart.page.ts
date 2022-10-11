@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { Preferences } from '@capacitor/preferences';
 import { IonContent, NavController } from '@ionic/angular';
 import * as moment from 'moment';
+import { Subscription } from 'rxjs';
+import { CartService } from 'src/app/services/cart/cart.service';
 import { GlobalService } from 'src/app/services/global/global.service';
 import { OrderService } from 'src/app/services/order/order.service';
 
@@ -16,10 +18,12 @@ export class CartPage implements OnInit {
   @ViewChild(IonContent, {static: false}) content: IonContent;
   urlCheck: any;
   url: any;
-  model: any;
+  model: any = {};
   deliveryCharge = 20;
   instruction: any;
   location: any = {};
+  cartSub: Subscription;
+
   
 
 
@@ -27,54 +31,29 @@ export class CartPage implements OnInit {
     private navCtrl: NavController,
     private router: Router,
     private orderService: OrderService,
-    private global: GlobalService
+    private global: GlobalService,
+    private cartService: CartService
   ) { }
 
   ngOnInit() {
-    this.checkUrl();
-    this.getModel();
+    this.cartSub = this.cartService.cart.subscribe(cart => {
+      this.model = cart;
+      if (!this.model) this.location = {};
+      console.log('cart page model: ', this.model);
+    })
+    this.getData();
+  }
 
-  }
-  getCart() {
-    return Preferences.get({key: 'cart'});
-  }
-  async getModel() {
-    let data: any = await this.getCart();
+  async getData() {
+    await this.checkUrl();
     this.location = {
       lat: 39.4748446276339, 
       Ing: -0.3790224001082603,
       address: 'Karol Bagh, New Delhi'
-    }
-    if(data?.value){
-      this.model = await JSON.parse(data.value);
-      console.log(this.model);
-      this.calculate();
-    }
-    
+    };
+    await this.cartService.getCartData();
   }
-  async calculate() {
-    let item = this.model.items.filter(x => x.quantity > 0);
-    this.model.items = item;
-    this.model.totalPrice = 0;
-    this.model.totalItem = 0;
-    this.model.deliveryCharge = 0;
-    this.model.grandTotal = 0;
-    item.forEach(element => {
-      this.model.totalItem += element.quantity;
-      this.model.totalPrice += (parseFloat(element.price) * parseFloat(element.quantity));
-    });
-    this.model.deliveryCharge = this.deliveryCharge
-    this.model.totalPrice = parseFloat(this.model.totalPrice).toFixed(2);
-    this.model.grandTotal = (parseFloat(this.model.totalPrice) + parseFloat(this.model.deliveryCharge)).toFixed(2);
-    if(this.model.totalItem == 0) {
-      this.model.totalItem = 0;
-      this.model.totalPrice = 0;
-      this.model.grandTotal = 0;
-      await this.clearCart();
-      this.model = null;
-    }
-    console.log('cart: ', this.model);
-  };
+
   
 
   clearCart(){
@@ -83,30 +62,6 @@ export class CartPage implements OnInit {
 
   getPreviousUrl() {
     return this.url.join('/');
-  }
-
-  quantityPlus(index) {
-    try {
-      console.log(this.model.items[index]);
-      if(!this.model.items[index].quantity || this.model.items[index].quantity == 0) {
-        this.model.items[index].quantity = 1;
-        this.calculate();
-      } else {
-        this.model.items[index].quantity += 1; 
-        this.calculate();
-      }
-    } catch(e) {
-      console.log(e);
-    }
-  }
-
-  quantityMinus(index) {
-    if(this.model.items[index].quantity !== 0) {
-      this.model.items[index].quantity -= 1; 
-    } else {
-      this.model.items[index].quantity = 0;
-    }
-    this.calculate();
   }
 
   checkUrl(){
@@ -119,13 +74,23 @@ export class CartPage implements OnInit {
     this.url = url;
     console.log(this.url);
   }
+  quantityPlus(i) {
+      this.cartService.quantityPlus(i);
+  }
+
+  quantityMinus(i) {
+      this.cartService.quantityMinus(i);
+  }
+
+  addAddress() {}
 
   changeAddress() {}
 
  async makePayment() {
     try {
       const data = {
-        restaurant_id: this.model.restaurant.id,
+        restaurant_id: this.model.restaurant.uid,
+        instruction: this.instruction ? this.instruction : '',
         res: this.model.restaurant,
         order: JSON.stringify(this.model.items),
         time: moment().format('111'),
@@ -135,11 +100,11 @@ export class CartPage implements OnInit {
         deliveryCharge:  this.deliveryCharge,
         status: 'Created',
         paid: 'COD'
-      }
+      };
       console.log('order: ', data );
-      await this.orderService.placeOrders(data);
+      await this.orderService.placeOrder(data);
       // clear cart
-      await this.clearCart();
+      await this.cartService.clearCart();
       this.global.successToast('Your Order is Placed Success');
       this.navCtrl.navigateRoot(['tabs/account']);
     } catch (e) {
@@ -152,5 +117,11 @@ export class CartPage implements OnInit {
     this.content.scrollToBottom(500);
   }
 
+  ionViewWillLeave() {
+    console.log('ionViewWillLeave CartPage')
+    if (this.model?.items && this.model.items.length > 0) {
+      this.cartService.saveCart();
+    }
+  }
 
 }
