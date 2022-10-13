@@ -1,11 +1,12 @@
-<ion-item-group>
+<ion-item-group class="borderBottom">
   <ion-item lines="none" class="dashedBorderBottom">
     <ion-label>
-      <h4>{{order?.restaurant?.name}}</h4>
+      {{order?.restaurant?.name}}
       <p>{{order?.restaurant?.address}}</p>
       <ion-text>
-        <p class="product"><ion-icon color="success"  name="cash-outline"></ion-icon> {{ order?.grandTotal }}
-        <ion-icon name="chevron-forward-outline"></ion-icon>
+        <p>
+          ₹{{order?.grandTotal}}
+          <ion-icon name="chevron-forward-outline"></ion-icon>
         </p>
       </ion-text>
     </ion-label>
@@ -17,7 +18,7 @@
   <ion-item lines="none">
     <ion-label>
       <ion-text color="dark" *ngFor="let item of order?.order">
-        <p class="product">{{item?.name}} x {{item?.quantity}}</p>
+        <p>{{item?.name}} x {{item?.quantity}}</p>
       </ion-text>
       <p class="time">{{order?.time}}</p>
       <ion-row>

@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { Preferences } from '@capacitor/preferences';
 import { IonContent, NavController } from '@ionic/angular';
 import * as moment from 'moment';
 import { Subscription } from 'rxjs';
@@ -14,7 +13,7 @@ import { OrderService } from 'src/app/services/order/order.service';
   styleUrls: ['./cart.page.scss'],
 })
 export class CartPage implements OnInit {
-  
+
   @ViewChild(IonContent, {static: false}) content: IonContent;
   urlCheck: any;
   url: any;
@@ -23,9 +22,6 @@ export class CartPage implements OnInit {
   instruction: any;
   location: any = {};
   cartSub: Subscription;
-
-  
-
 
   constructor(
     private navCtrl: NavController,
@@ -37,8 +33,9 @@ export class CartPage implements OnInit {
 
   ngOnInit() {
     this.cartSub = this.cartService.cart.subscribe(cart => {
+      console.log('cart page: ', cart);
       this.model = cart;
-      if (!this.model) this.location = {};
+      if(!this.model) this.location = {};
       console.log('cart page model: ', this.model);
     })
     this.getData();
@@ -47,24 +44,14 @@ export class CartPage implements OnInit {
   async getData() {
     await this.checkUrl();
     this.location = {
-      lat: 39.4748446276339, 
-      Ing: -0.3790224001082603,
+      lat: 28.653831, 
+      lng: 77.188257, 
       address: 'Karol Bagh, New Delhi'
     };
     await this.cartService.getCartData();
   }
 
-  
-
-  clearCart(){
-    return Preferences.remove({key: 'cart'});
-  }
-
-  getPreviousUrl() {
-    return this.url.join('/');
-  }
-
-  checkUrl(){
+  checkUrl() {
     let url: any = (this.router.url).split('/');
     console.log('url: ', url);
     const spliced = url.splice(url.length - 2, 2); // /tabs/cart url.length - 1 - 1
@@ -74,43 +61,47 @@ export class CartPage implements OnInit {
     this.url = url;
     console.log(this.url);
   }
-  quantityPlus(i) {
-      this.cartService.quantityPlus(i);
+
+  getPreviousUrl() {
+    return this.url.join('/');
   }
 
-  quantityMinus(i) {
-      this.cartService.quantityMinus(i);
+  quantityPlus(index) {
+    this.cartService.quantityPlus(index);
+  }
+
+  quantityMinus(index) {
+    this.cartService.quantityMinus(index);
   }
 
   addAddress() {}
 
   changeAddress() {}
 
- async makePayment() {
+  async makePayment() {
     try {
       const data = {
         restaurant_id: this.model.restaurant.uid,
         instruction: this.instruction ? this.instruction : '',
         res: this.model.restaurant,
         order: JSON.stringify(this.model.items),
-        time: moment().format('111'),
+        time: moment().format('lll'),
         address: this.location,
         total: this.model.totalPrice,
         grandTotal: this.model.grandTotal,
-        deliveryCharge:  this.deliveryCharge,
+        deliveryCharge: this.deliveryCharge,
         status: 'Created',
         paid: 'COD'
       };
-      console.log('order: ', data );
+      console.log('order: ', data);
       await this.orderService.placeOrder(data);
       // clear cart
       await this.cartService.clearCart();
-      this.global.successToast('Your Order is Placed Success');
+      this.global.successToast('Your Order is Placed Successfully');
       this.navCtrl.navigateRoot(['tabs/account']);
-    } catch (e) {
+    } catch(e) {
       console.log(e);
     }
-    
   }
 
   scrollToBottom() {
@@ -118,8 +109,8 @@ export class CartPage implements OnInit {
   }
 
   ionViewWillLeave() {
-    console.log('ionViewWillLeave CartPage')
-    if (this.model?.items && this.model.items.length > 0) {
+    console.log('ionViewWillLeave CartPage');
+    if(this.model?.items && this.model?.items.length > 0) {
       this.cartService.saveCart();
     }
   }

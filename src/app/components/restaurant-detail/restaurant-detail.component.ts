@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
   selector: 'app-restaurant-detail',
@@ -7,8 +7,8 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class RestaurantDetailComponent implements OnInit {
 
-  @Input() data:any;
-  @Input() isLoading: any;
+  @Input() data: any;
+  @Input() isLoading;
 
   constructor() { }
 
@@ -17,6 +17,5 @@ export class RestaurantDetailComponent implements OnInit {
   getCuisine(cuisine) {
     return cuisine.join(', ');
   }
-
 
 }

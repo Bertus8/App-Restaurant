@@ -89,5 +89,5 @@ export class AddressPage implements OnInit, OnDestroy {
   ngOnDestroy() {
     if(this.addressesSub) this.addressesSub.unsubscribe();
   }
-}
 
+}

@@ -1,16 +1,6 @@
-h1 {
-    font-weight: bold ;
-    font-size: 1.2rem;
-}
-
-
 .veg {
     align-items: center;
 }
-
-
-
-
 
 ion-list-header {
     font-size: 1rem;
@@ -18,25 +8,14 @@ ion-list-header {
     letter-spacing: 0.5px;
 }
 
-ion-text {
-    font-size: 0.8rem;
-    p{
-        margin-top: 0.2rem;
-        
-    }
-}
-
-.quantity{
-    width: 2rem;
-}
 
 ion-footer {
     h4, p {
         margin-left: 3%;
     }
-    p{
+    p {
         font-size: 0.55rem !important;
         letter-spacing: 0.5px;
-
     }
+
 }

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from 'src/app/services/api/api.service';
 
-
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
@@ -19,7 +18,7 @@ export class HomePage implements OnInit {
 
   ngOnInit() {
     this.isLoading = true;
-    setTimeout(() => {
+    setTimeout(() => {  
       this.banners = this.api.banners;
       this.restaurants = this.api.restaurants;
       this.isLoading = false;

@@ -1,5 +1,4 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
-
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-item',
@@ -13,18 +12,16 @@ export class ItemComponent implements OnInit {
   @Output() add: EventEmitter<any> = new EventEmitter();
   @Output() minus: EventEmitter<any> = new EventEmitter();
 
-
   constructor() { }
 
   ngOnInit() {}
 
-  
   quantityPlus() {
-    this.add.emit(this.index);
+    this.add.emit(this.item);
   }
 
   quantityMinus() {
-    this.minus.emit(this.index);
+    this.minus.emit(this.item);
   }
 
 }

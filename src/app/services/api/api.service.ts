@@ -222,8 +222,7 @@ export class ApiService {
 
   addresses: any[] = [     
     {address: "Fancy Bazaar, India", house: "2nd Floor", id: "7Kox63KlggTvV7ebRKar", landmark: "Fancy Bazar", lat: 26.1830738, lng: 91.74049769999999, title: "Fancy", user_id: "1"},
-    {address: "Kanuat palace, India", house: "Ground Floor", id: "8Kox63KlggTvV7ebRKar", landmark: "Bazar", lat: 26.1830738, lng: 91.74049769999999, title: "Work", user_id: "1"},
-    {address: "Kanuat palace, India", house: "Ground Floor", id: "9Opl63KlggTvV7ebgfet", landmark: "Bazar", lat: 26.1830738, lng: 91.74049769999999, title: "Home", user_id: "1"}
+    {address: "Kanuat palace, India", house: "Ground Floor", id: "8Kox63KlggTvV7ebRKar", landmark: "Bazar", lat: 26.1830738, lng: 91.74049769999999, title: "Work", user_id: "1"}
   ];
 
   orders: any[] = [      

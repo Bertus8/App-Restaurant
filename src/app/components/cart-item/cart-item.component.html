@@ -1,4 +1,7 @@
 <ion-item>
+  <ion-text color="success">
+    <span class="dotStyle">&#9679;</span>
+  </ion-text>
   <ion-label class="ion-text-wrap">
     <h5>{{item?.name}}</h5>
   </ion-label>
@@ -8,6 +11,6 @@
     <ion-icon color="success" name="add-outline" (click)="quantityPlus()"></ion-icon>
   </ion-row>
   <ion-text slot="end" color="dark" class="price ion-text-right">
-   <h6>{{item?.price * item.quantity}} <ion-icon color="success"  name="cash-outline"></ion-icon></h6> 
+    ₹{{(item?.price * item.quantity) | number: '0.2-2'}}
   </ion-text>
 </ion-item>

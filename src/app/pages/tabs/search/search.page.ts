@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { element } from 'protractor';
 import { ApiService } from 'src/app/services/api/api.service';
 
 @Component({
@@ -11,9 +10,9 @@ export class SearchPage implements OnInit {
 
   @ViewChild('searchInput') sInput;
   model: any = {
-    icon: "search-outline",
+    icon: 'search-outline',
     title: 'No Restaurants Record Found'
-  }
+  };
   isLoading: boolean;
   query: any;
   allRestaurants: any[] = [];
@@ -25,7 +24,7 @@ export class SearchPage implements OnInit {
     setTimeout(() => {
       this.allRestaurants = this.api.allRestaurants;
       this.sInput.setFocus();
-    },500)
+    }, 500);
   }
 
   async onSearchChange(event) {
@@ -34,13 +33,13 @@ export class SearchPage implements OnInit {
     this.restaurants = [];
     if(this.query.length > 0) {
       this.isLoading = true;
-      setTimeout(async () =>{
+      setTimeout(async() => {
         this.restaurants = await this.allRestaurants.filter((element: any) => {
-          return element.short_name.includes(this.query)
+          return element.short_name.includes(this.query);
         });
         console.log(this.restaurants);
-        this.isLoading=false;
-      },3000)
+        this.isLoading = false;
+      }, 3000);
     }
   }
 

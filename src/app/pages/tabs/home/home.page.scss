@@ -1,26 +1,13 @@
 ion-header {
-    
-    ion-icon{
+    ion-icon {
         font-size: 1rem;
-        margin-top: 10px;
-    }
-   
+    }    
 }
-
-ion-content{
-  
-ion-label{
-    font-size: 0.9rem;
-    font-weight: bold ;
-    h2{
+ion-label {
+    h4 {
         font-size: 1.2rem;
-        font-weight:bold ;
-    }
+    }    
     p {
         font-size: 0.7rem;
-        margin-bottom: 5px;
     }
-}
-
-
 }

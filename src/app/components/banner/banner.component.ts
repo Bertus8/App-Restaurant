@@ -1,7 +1,9 @@
 import { AfterContentChecked, Component, Input, OnInit } from '@angular/core';
-import SwiperCore, { Keyboard, EffectFlip, Navigation, Pagination, SwiperOptions } from 'swiper';
+// import Swiper core and required modules
+import SwiperCore, { Keyboard, Pagination, SwiperOptions } from 'swiper';
 
-SwiperCore.use([Navigation, Pagination, EffectFlip, Keyboard]);
+// install Swiper modules
+SwiperCore.use([Pagination, Keyboard]);
 
 @Component({
   selector: 'app-banner',
@@ -9,22 +11,22 @@ SwiperCore.use([Navigation, Pagination, EffectFlip, Keyboard]);
   styleUrls: ['./banner.component.scss'],
 })
 export class BannerComponent implements OnInit, AfterContentChecked {
+
   @Input() bannerImages: any[];
   config: SwiperOptions = {};
+
   constructor() { }
 
   ngOnInit() {}
 
   ngAfterContentChecked(): void {
-      this.config = {
-        slidesPerView: 1.1,
-        spaceBetween: -300,
-        navigation: true,
-        pagination: { clickable: true },
-        centeredSlides: true,
-        effect: 'flip',
-        keyboard: {enabled:true},
-      }
+    this.config = {
+      slidesPerView: 1.1,
+      // navigation: true,
+      pagination: { clickable: true },
+      keyboard: { enabled: true }
+      // centeredSlides: true
+    };
   }
 
 }

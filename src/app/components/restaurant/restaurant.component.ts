@@ -1,5 +1,4 @@
-import { Component, Input, OnInit, Output } from '@angular/core';
-
+import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
   selector: 'app-restaurant',
@@ -10,15 +9,12 @@ export class RestaurantComponent implements OnInit {
 
   @Input() restaurant: any;
 
-
   constructor() { }
 
   ngOnInit() {}
 
   getCuisine(cuisine) {
-    return cuisine.join(',')
+    return cuisine.join(', ');
   }
-
-
 
 }
