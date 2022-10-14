@@ -221,3 +221,11 @@
     --ion-card-background: #1e1e1e;
   }
 }
+
+.address-modal::part(content) {
+  --height: 70%;
+  --border-radius: 5px;
+  bottom: 0;
+  position: absolute;
+
+}

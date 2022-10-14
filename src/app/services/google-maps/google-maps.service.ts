@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { map, switchMap } from 'rxjs/operators';
 
@@ -8,7 +8,9 @@ import { map, switchMap } from 'rxjs/operators';
 })
 export class GoogleMapsService {
 
-  constructor(private http: HttpClient) {}
+  googleMaps: any;
+
+  constructor(private http: HttpClient, private zone: NgZone) {}
 
   loadGoogleMaps(): Promise<any> {
     const win = window as any;
@@ -52,6 +54,39 @@ export class GoogleMapsService {
           reject(e);
         });
     });
+  }
+
+  async getPlaces(query) {
+    try {
+      if(!this.googleMaps) {
+        this.googleMaps = await this.loadGoogleMaps();
+      }
+      let googleMaps: any = this.googleMaps;
+      console.log('maps: ', this.googleMaps);
+      let service = new googleMaps.places.AutocompleteService();
+      service.getPlacePredictions({
+        input:query,
+        componentrestrictions: {
+          country: 'IN'
+        }
+      }, (predictions,status) => {
+        let autoCompleteItems = [];
+        this.zone.run(() => {
+          if(predictions != null){
+            predictions.forEach((prediction) => {
+              console.log('prediction: ',prediction);
+              //let latLng: any = await this.geoCode(prediction.description, googleMaps);
+            })
+          }
+        })
+      })
+    } catch (e) {
+      console.log(e); 
+    }
+  }
+
+  geoCode(address, googleMaps) {
+    let latlng =
   }
 
 }

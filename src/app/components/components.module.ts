@@ -4,6 +4,7 @@ import { RestaurantComponent } from './restaurant/restaurant.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { EmptyScreenComponent } from './empty-screen/empty-screen.component';
+import { SearchLocationComponent } from './search-location/search-location.component';
 
 
 
@@ -11,7 +12,8 @@ import { EmptyScreenComponent } from './empty-screen/empty-screen.component';
   declarations: [
     RestaurantComponent,
     LoadingRestaurantComponent,
-    EmptyScreenComponent
+    EmptyScreenComponent,
+    SearchLocationComponent
   ],
   imports: [
     CommonModule,
@@ -20,8 +22,10 @@ import { EmptyScreenComponent } from './empty-screen/empty-screen.component';
   exports: [
     RestaurantComponent,
     LoadingRestaurantComponent,
-    EmptyScreenComponent
+    EmptyScreenComponent,
+    SearchLocationComponent
   ],
-  entryComponents: []
+  // solo aquellos componentes no definidos en la plantilla aparecen aqui.
+  entryComponents: [SearchLocationComponent]
 })
 export class ComponentsModule { }

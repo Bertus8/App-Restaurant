@@ -8,13 +8,15 @@ import { EditAddressPageRoutingModule } from './edit-address-routing.module';
 
 import { EditAddressPage } from './edit-address.page';
 import { MapComponent } from 'src/app/components/map/map.component';
+import { ComponentsModule } from 'src/app/components/components.module';
 
 @NgModule({
   imports: [
     CommonModule,
     ReactiveFormsModule,
     IonicModule,
-    EditAddressPageRoutingModule
+    EditAddressPageRoutingModule,
+    ComponentsModule
   ],
   declarations: [EditAddressPage, MapComponent]
 })
