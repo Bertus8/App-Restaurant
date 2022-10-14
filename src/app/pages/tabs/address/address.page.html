@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar mode="md">
+  <ion-toolbar>
     <ion-title><ion-label color="dark">MANAGE ADDRESSES</ion-label></ion-title>
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/tabs/account"></ion-back-button>
@@ -40,6 +40,10 @@
 
 <ion-footer>
   <ion-toolbar color="light">
-    <ion-button fill="outline" color="success" expand="block" class="ion-margin-horizontal">ADD NEW ADDRESS</ion-button>
+    <ion-button 
+      [routerLink]="['/', 'tabs', 'address', 'edit-address']" 
+      fill="outline" color="success" expand="block" class="ion-margin-horizontal">
+      ADD NEW ADDRESS
+    </ion-button>
   </ion-toolbar>
 </ion-footer>

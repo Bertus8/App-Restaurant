@@ -1,5 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { NavigationExtras, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { Address } from 'src/app/models/address.model';
 import { AddressService } from 'src/app/services/address/address.service';
 import { GlobalService } from 'src/app/services/global/global.service';
 
@@ -11,32 +13,22 @@ import { GlobalService } from 'src/app/services/global/global.service';
 export class AddressPage implements OnInit, OnDestroy {
 
   isLoading: boolean;
-  addresses: any[] = [];
+  addresses: Address[] = [];
   addressesSub: Subscription;
-  model: any = {
+  model = {
     title: 'No Addresses added yet',
     icon: 'location-outline'
   };
 
   constructor(
     private global: GlobalService,
-    private addressService: AddressService) { }
+    private addressService: AddressService,
+    private router: Router) { }
 
   ngOnInit() {
     this.addressesSub = this.addressService.addresses.subscribe(address => {
       console.log('addresses: ', address);
-      if(address instanceof Array) {
-        this.addresses = address;
-      } else {
-        if(address?.delete) {
-          this.addresses = this.addresses.filter(x => x.id != address.id);
-        } else if(address?.update) {
-          const index = this.addresses.findIndex(x => x.id == address.id);
-          this.addresses[index] = address;
-        } else {
-          this.addresses = this.addresses.concat(address);
-        }
-      }
+      this.addresses = address;      
     });
     this.getAddresses();
   }
@@ -57,7 +49,13 @@ export class AddressPage implements OnInit, OnDestroy {
   }
 
   editAddress(address) {
-
+    console.log(address);
+    const navData: NavigationExtras = {
+      queryParams: {
+        data: JSON.stringify(address)
+      }
+    };
+    this.router.navigate([this.router.url, 'edit-address'], navData);
   }
 
   deleteAddress(address) {

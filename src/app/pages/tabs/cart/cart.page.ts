@@ -3,6 +3,9 @@ import { Router } from '@angular/router';
 import { IonContent, NavController } from '@ionic/angular';
 import * as moment from 'moment';
 import { Subscription } from 'rxjs';
+import { Address } from 'src/app/models/address.model';
+import { Cart } from 'src/app/models/cart.model';
+import { Order } from 'src/app/models/order.model';
 import { CartService } from 'src/app/services/cart/cart.service';
 import { GlobalService } from 'src/app/services/global/global.service';
 import { OrderService } from 'src/app/services/order/order.service';
@@ -17,10 +20,10 @@ export class CartPage implements OnInit {
   @ViewChild(IonContent, {static: false}) content: IonContent;
   urlCheck: any;
   url: any;
-  model: any = {};
+  model = {} as Cart;
   deliveryCharge = 20;
   instruction: any;
-  location: any = {};
+  location = {} as Address;
   cartSub: Subscription;
 
   constructor(
@@ -35,7 +38,7 @@ export class CartPage implements OnInit {
     this.cartSub = this.cartService.cart.subscribe(cart => {
       console.log('cart page: ', cart);
       this.model = cart;
-      if(!this.model) this.location = {};
+      if(!this.model) this.location = {} as Address;
       console.log('cart page model: ', this.model);
     })
     this.getData();
@@ -43,11 +46,21 @@ export class CartPage implements OnInit {
 
   async getData() {
     await this.checkUrl();
-    this.location = {
+    /*this.location = {
       lat: 28.653831, 
       lng: 77.188257, 
       address: 'Karol Bagh, New Delhi'
-    };
+    } as Address;*/
+    this.location = new Address(
+      'address1',
+      'user1',
+      'Address 1',
+      'Karol Bagh, New Delhi',
+      '',
+      '',
+      28.653831, 
+      77.188257, 
+    )
     await this.cartService.getCartData();
   }
 
@@ -80,11 +93,11 @@ export class CartPage implements OnInit {
 
   async makePayment() {
     try {
-      const data = {
+      const data: Order = {
         restaurant_id: this.model.restaurant.uid,
         instruction: this.instruction ? this.instruction : '',
-        res: this.model.restaurant,
-        order: JSON.stringify(this.model.items),
+        restaurant: this.model.restaurant,
+        order:(this.model.items),// JSON.stringify
         time: moment().format('lll'),
         address: this.location,
         total: this.model.totalPrice,
@@ -97,6 +110,7 @@ export class CartPage implements OnInit {
       await this.orderService.placeOrder(data);
       // clear cart
       await this.cartService.clearCart();
+      this.model = {} as Cart;
       this.global.successToast('Your Order is Placed Successfully');
       this.navCtrl.navigateRoot(['tabs/account']);
     } catch(e) {

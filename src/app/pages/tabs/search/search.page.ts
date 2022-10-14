@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { Restaurant } from 'src/app/models/restaurant.model';
 import { ApiService } from 'src/app/services/api/api.service';
 
 @Component({
@@ -15,8 +16,8 @@ export class SearchPage implements OnInit {
   };
   isLoading: boolean;
   query: any;
-  allRestaurants: any[] = [];
-  restaurants: any[] = [];
+  allRestaurants: Restaurant[] = [];
+  restaurants: Restaurant[] = [];
 
   constructor(private api: ApiService) { }
 
