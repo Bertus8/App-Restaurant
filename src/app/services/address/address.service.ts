@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { SearchLocationComponent } from 'src/app/components/search-location/search-location.component';
 import { Address } from 'src/app/models/address.model';
 import { ApiService } from '../api/api.service';
 
@@ -9,9 +10,14 @@ import { ApiService } from '../api/api.service';
 export class AddressService {
 
   private _addresses = new BehaviorSubject<Address[]>([]);
+  private _addressChange = new BehaviorSubject<Address>(null);
 
   get addresses() {
     return this._addresses.asObservable();
+  }
+  
+  get addressChange() {
+    return this._addressChange.asObservable();
   }
 
   constructor(private api: ApiService) { }
@@ -32,20 +38,19 @@ export class AddressService {
     param.id = 'address1';
     param.user_id = 'user1';
     const currentAddresses = this._addresses.value;
-    currentAddresses.push(
-      new Address(
-        param.id,
-        param.user_id,
-        param.title,
-        param.address,
-        param.landmark,
-        param.house,
-        param.lat,
-        param.lng
-      )
+    const data = new Address(
+      param.id,
+      param.user_id,
+      param.title,
+      param.address,
+      param.landmark,
+      param.house,
+      param.lat,
+      param.lng
     );
+    currentAddresses.push(data);
     this._addresses.next(currentAddresses);
-
+    this._addressChange.next(data);
   }
 
   updateAddress(id, param) {
@@ -70,4 +75,21 @@ export class AddressService {
     currentAddresses = currentAddresses.filter(x => x.id != param.id);
     this._addresses.next(currentAddresses);
   }
+
+  changeAddress(address){
+    try {
+      const options = {
+        component: SearchLocationComponent,
+        swipeToClose: true,
+        cssClass: 'custom-modal',
+        componentProps: {
+          from: 'cart'
+        }
+      }
+      
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
 }

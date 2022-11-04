@@ -48,7 +48,7 @@ export class GlobalService {
   }
 
   showLoader(msg?, spinner?) {
-    // this.isLoading = true;
+    //this.isLoading = true;
     if(!this.isLoading) this.setLoader();
     return this.loadingCtrl.create({
       message: msg,
@@ -68,7 +68,7 @@ export class GlobalService {
   }
 
   hideLoader() {
-    // this.isLoading = false;
+    //this.isLoading = false;
     if(this.isLoading) this.setLoader();
     return this.loadingCtrl.dismiss()
     .then(() => console.log('dismissed'))
@@ -98,5 +98,4 @@ export class GlobalService {
     }
   }
 
-  
 }

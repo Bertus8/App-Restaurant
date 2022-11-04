@@ -1,11 +1,13 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonContent, NavController } from '@ionic/angular';
 import * as moment from 'moment';
 import { Subscription } from 'rxjs';
+import { SearchLocationComponent } from 'src/app/components/search-location/search-location.component';
 import { Address } from 'src/app/models/address.model';
 import { Cart } from 'src/app/models/cart.model';
 import { Order } from 'src/app/models/order.model';
+import { AddressService } from 'src/app/services/address/address.service';
 import { CartService } from 'src/app/services/cart/cart.service';
 import { GlobalService } from 'src/app/services/global/global.service';
 import { OrderService } from 'src/app/services/order/order.service';
@@ -15,7 +17,7 @@ import { OrderService } from 'src/app/services/order/order.service';
   templateUrl: './cart.page.html',
   styleUrls: ['./cart.page.scss'],
 })
-export class CartPage implements OnInit {
+export class CartPage implements OnInit, OnDestroy {
 
   @ViewChild(IonContent, {static: false}) content: IonContent;
   urlCheck: any;
@@ -25,16 +27,21 @@ export class CartPage implements OnInit {
   instruction: any;
   location = {} as Address;
   cartSub: Subscription;
+  addressSub: Subscription;
 
   constructor(
     private navCtrl: NavController,
     private router: Router,
     private orderService: OrderService,
     private global: GlobalService,
-    private cartService: CartService
+    private cartService: CartService,
+    private addressService: AddressService
   ) { }
 
   ngOnInit() {
+    this.addressSub = this.addressService.addressChange.subscribe(address =>{
+      this.location = address;
+    });
     this.cartSub = this.cartService.cart.subscribe(cart => {
       console.log('cart page: ', cart);
       this.model = cart;
@@ -87,9 +94,31 @@ export class CartPage implements OnInit {
     this.cartService.quantityMinus(index);
   }
 
-  addAddress() {}
+  addAddress() {
+    let url: any;
+    if(this.urlCheck == 'tabs') url = ['/', 'tabs', 'address', 'edit-address'];
+    else url = [this.router.url, 'address', 'edit-address'];
+    this.router.navigate(url);
+  }
 
-  changeAddress() {}
+  async changeAddress() {
+    try {
+      const options = {
+        component: SearchLocationComponent,
+        swipeToClose: true,
+        cssClass: 'custom-modal',
+        componentProps: {
+          from:'cart'
+        }
+      };
+      const address = await this.global.createModal(options);
+      if(address) {
+        this.location = address;
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
   async makePayment() {
     try {
@@ -127,6 +156,12 @@ export class CartPage implements OnInit {
     if(this.model?.items && this.model?.items.length > 0) {
       this.cartService.saveCart();
     }
+  }
+
+  ngOnDestroy(): void {
+    console.log('Destroy CartPage');
+    if(this.addressSub) this.addressSub.unsubscribe();
+    if(this.cartSub) this.cartSub.unsubscribe();
   }
 
 }

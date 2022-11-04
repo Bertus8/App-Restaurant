@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, NgZone } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { map, switchMap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +10,17 @@ import { map, switchMap } from 'rxjs/operators';
 export class GoogleMapsService {
 
   googleMaps: any;
+  private _places = new BehaviorSubject<any[]>([]);
+  private _markerChange = new BehaviorSubject<any>({});
+
+  get places() {
+    return this._places.asObservable();
+  }
+
+  get makerChange() {
+    return this._markerChange.asObservable();
+  }
+
 
   constructor(private http: HttpClient, private zone: NgZone) {}
 
@@ -69,14 +81,24 @@ export class GoogleMapsService {
         componentrestrictions: {
           country: 'IN'
         }
-      }, (predictions,status) => {
+      }, (predictions) => {
         let autoCompleteItems = [];
         this.zone.run(() => {
           if(predictions != null){
-            predictions.forEach((prediction) => {
+            predictions.forEach(async (prediction) => {
               console.log('prediction: ',prediction);
-              //let latLng: any = await this.geoCode(prediction.description, googleMaps);
-            })
+              let latLng: any = await this.geoCode(prediction.description, googleMaps);
+              const places = {
+                location_name : prediction.structured_formatting.main_text,
+                address: prediction.description,
+                lat: latLng.lat,
+                lng: latLng
+              };
+              console.log('places: ', places);
+              autoCompleteItems.push(places);
+            });
+            // rxjs behaviourSubject
+            this._places.next(autoCompleteItems);
           }
         })
       })
@@ -86,7 +108,20 @@ export class GoogleMapsService {
   }
 
   geoCode(address, googleMaps) {
-    let latlng =
+    let latlng = {lat: '', lng: ''};
+    return new Promise((resolve, reject) => {
+      let geocoder = new googleMaps.Geocoder();
+      geocoder.geocode({'address' : address}, (results) => {
+        console.log('results: ', results)
+        latlng.lat = results[0].geometry.location.lat();
+        latlng.lng = results[0].geometry.location.lng();
+        resolve(latlng);
+      })
+    })
+  }
+
+  changeMarkerInMap(location) {
+    this._markerChange.next(location);
   }
 
 }
