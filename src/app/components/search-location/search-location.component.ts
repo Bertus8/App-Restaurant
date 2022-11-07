@@ -42,7 +42,8 @@ export class SearchLocationComponent implements OnInit, OnDestroy {
     this.addressSub = this.addressService.addresses.subscribe(addresses =>{
       this.savedPlaces = addresses;
     });
-    await this.addressService.getAddresses();
+    if(this.from == 'home') await this.addressService.getAddresses(2);
+    else await this.addressService.getAddresses();
     this.global.hideLoader();
   }
 
@@ -63,8 +64,14 @@ export class SearchLocationComponent implements OnInit, OnDestroy {
     this.global.modalDismiss(val);
   }
 
-  choosePlace(place) {
+  async choosePlace(place) {
+    this.global.showLoader();
     console.log(place);
+    if(this.from){
+      const savedPlace = await this.savedPlaces.find(x => x.lat == place.lat && x.lng == place.lng);
+      if(savedPlace?.lat) place = savedPlace;
+    }
+    this.global.hideLoader();
     this.dismiss(place);
   }
 
@@ -76,7 +83,7 @@ export class SearchLocationComponent implements OnInit, OnDestroy {
       const result = await this.maps.getAddress(latitude, longitude);
       console.log(result);
       const place = {
-        location_name: result.address_components[0].short_name,
+        title: result.address_components[0].short_name,
         address: result.formatted_address,
         lat: latitude,
         lng: longitude

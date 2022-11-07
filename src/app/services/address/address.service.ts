@@ -9,6 +9,8 @@ import { ApiService } from '../api/api.service';
 })
 export class AddressService {
 
+  radius = 10; // in KM
+
   private _addresses = new BehaviorSubject<Address[]>([]);
   private _addressChange = new BehaviorSubject<Address>(null);
 
@@ -22,11 +24,20 @@ export class AddressService {
 
   constructor(private api: ApiService) { }
 
-  getAddresses() {
+  getAddresses(limit?) {
     try {
       //user id
       let allAddress: Address[] = this.api.addresses;
       console.log(allAddress);
+      if(limit){
+        let address: Address[] = [];
+        let length = limit;
+        if(allAddress.length < limit) length = allAddress.length;
+        for (let i = 0; i < length; i++) {
+        address.push(allAddress[i]);
+        }
+        allAddress = address;
+      }
       this._addresses.next(allAddress);
     } catch(e) {
       console.log(e);
@@ -57,7 +68,7 @@ export class AddressService {
     param.id = id;
     let currentAddresses = this._addresses.value;
     const index = currentAddresses.findIndex(x => x.id == id);
-    currentAddresses[index] = new Address(
+    const data = new Address(
       id,
       param.user_id,
       param.title,
@@ -67,7 +78,9 @@ export class AddressService {
       param.lat,
       param.lng
     );
+    currentAddresses[index] = data;
     this._addresses.next(currentAddresses);
+    this._addressChange.next(data);
   }
 
   deleteAddress(param) {
@@ -77,19 +90,22 @@ export class AddressService {
   }
 
   changeAddress(address){
-    try {
-      const options = {
-        component: SearchLocationComponent,
-        swipeToClose: true,
-        cssClass: 'custom-modal',
-        componentProps: {
-          from: 'cart'
-        }
-      }
-      
-    } catch (e) {
-      console.log(e)
-    }
+    this._addressChange.next(address);
   }
+
+  async checkExistAddress(location?) {
+    console.log('check exist address: ', location);
+    let loc: Address = location;
+    const address = await this.api.addresses.find(x => x.lat === location.lat && x.lng === location.lng );
+    if(address) loc = address;
+    console.log(loc)
+    this.changeAddress(loc);
+    /*if (address) {
+      this.changeAddress(address);
+      return true;
+    } else return null;
+    if(!address)*/
+  }
+
 
 }

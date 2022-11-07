@@ -1,8 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { EditProfileComponent } from 'src/app/components/edit-profile/edit-profile.component';
 import { Order } from 'src/app/models/order.model';
 import { CartService } from 'src/app/services/cart/cart.service';
+import { GlobalService } from 'src/app/services/global/global.service';
 import { OrderService } from 'src/app/services/order/order.service';
+import { ProfileService } from 'src/app/services/profile/profile.service';
 
 @Component({
   selector: 'app-account',
@@ -15,30 +18,25 @@ export class AccountPage implements OnInit, OnDestroy {
   isLoading: boolean;
   orders: Order[] = [];
   ordersSub: Subscription;
+  profileSub: Subscription;
 
   constructor(
     private orderService: OrderService,
-    private cartService: CartService
+    private cartService: CartService,
+    private global: GlobalService,
+    private profileService: ProfileService
     ) { }
 
   ngOnInit() {
     this.ordersSub = this.orderService.orders.subscribe(order => {
       console.log('order data: ', order);
       this.orders = order;
-      /*if(order instanceof Array) {
-        this.orders = order;
-      } else {
-        if(order?.delete) {
-          this.orders = this.orders.filter(x => x.id != order.id);
-        } else if(order?.update) {
-          const index = this.orders.findIndex(x => x.id == order.id);
-          this.orders[index] = order;
-        } else {
-          this.orders = this.orders.concat(order);
-        }
-      }*/
     }, e => {
       console.log(e);
+    });
+    this.profileSub = this.profileService.profile.subscribe(profile => {
+      this.profile = profile;
+      console.log(this.profile);
     });
     this.getData();
   }
@@ -73,8 +71,21 @@ export class AccountPage implements OnInit, OnDestroy {
     console.log(order);
   }
 
+  async editProfile() {
+    const options = {
+      component: EditProfileComponent,
+      componentProps: {
+        profile: this.profile
+      },
+      cssClass: 'custom-modal',
+      swipeToClose: true
+    };
+    const modal = await this.global.createModal(options);
+  }
+
   ngOnDestroy() {
     if(this.ordersSub) this.ordersSub.unsubscribe();
+    if(this.profileSub) this.profileSub.unsubscribe();
   }
 
 }

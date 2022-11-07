@@ -56,8 +56,10 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     } catch(e) {
       console.log(e);
+      this.center = { lat: 28.649944693035188, lng: 77.23961776224988 };
+      console.log(this.center);
       this.loadMap();
-      // this.getAddress(this.center.lat, this.center.lng);
+      this.getAddress(this.center.lat, this.center.lng);
     }
   }
 
@@ -121,7 +123,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
       const result = await this.maps.getAddress(lat, lng);
       console.log(result);
       const loc = {
-        location_name: result.address_components[0].short_name,
+        title: result.address_components[0].short_name,
         address: result.formatted_address,
         lat,
         lng

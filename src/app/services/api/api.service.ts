@@ -29,7 +29,9 @@ export class ApiService {
       rating: 5,
       delivery_time: 25,
       distance: 2.5,
-      price: 100
+      price: 100,
+      latitude: 28.649944693035188,
+      longitude: 77.23961776224988
     },
     {
       uid: '12wefdefsdss',
@@ -73,7 +75,9 @@ export class ApiService {
       ],
       rating: 5,
       delivery_time: 25,
-      price: 100
+      price: 100,
+      latitude: 28.649944693035188,
+      longitude: 77.23961776224988
     },
     {
       uid: '12wefdefsdss',
@@ -117,7 +121,9 @@ export class ApiService {
       rating: 5,
       delivery_time: 25,
       distance: 2.5,
-      price: 100
+      price: 100,
+      latitude: 28.649944693035188,
+      longitude: 77.23961776224988
     },
     {
       uid: '12wefdefsdss',
@@ -226,14 +232,24 @@ export class ApiService {
   ];
 
   addresses: Address[] = [     
-    {address: "Fancy Bazaar, India",
+    {
+      address: "Fancy Bazaar, India",
      house: "2nd Floor",
      id: "7Kox63KlggTvV7ebRKar",
      landmark: "Fancy Bazar", 
      lat: 26.1830738, lng: 91.74049769999999, 
      title: "Fancy", 
      user_id: "1"},
-    {address: "Kanuat palace, India", house: "Ground Floor", id: "8Kox63KlggTvV7ebRKar", landmark: "Bazar", lat: 26.1830738, lng: 91.74049769999999, title: "Work", user_id: "1"}
+    {address: "Kanuat palace, India", house: "Ground Floor", id: "8Kox63KlggTvV7ebRKar", landmark: "Bazar", lat: 26.1830738, lng: 91.74049769999999, title: "Work", user_id: "1"},
+    {
+      address: "Delhi, India",
+     house: "2nd Floor",
+     id: "7Kox63KlggTvV7ebRDelhi",
+     landmark: "Delhi", 
+     lat: 28.649944693035188, 
+     lng: 77.23961776224988,
+     title: "Delhi", 
+     user_id: "1"},
   ];
 
   orders: Order[] = [      

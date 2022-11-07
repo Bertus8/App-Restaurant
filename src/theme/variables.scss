@@ -235,3 +235,10 @@
   bottom: 0;
   position: absolute;
 }
+
+.home-modal::part(content) {
+  --height: 78%;
+  --border-radius: 5px;
+  bottom: 0;
+  position: absolute;
+}

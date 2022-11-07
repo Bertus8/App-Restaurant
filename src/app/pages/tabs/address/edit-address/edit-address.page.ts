@@ -22,6 +22,8 @@ export class EditAddressPage implements OnInit {
   update: boolean;
   id: any;
   isLoading: boolean = false;
+  from: string;
+  check: boolean = false;
 
   constructor(
     private navCtrl: NavController,
@@ -36,26 +38,27 @@ export class EditAddressPage implements OnInit {
 
   checkForUpdate() {
     this.isLoading = true;
-    this.location.location_name = 'Locating...';
+    this.location.title = 'Locating...';
     this.isLocationFetched = false;
     this.route.queryParams.subscribe(async(data) => {
       console.log('data: ', data);
       if(data?.data) {
         const address = JSON.parse(data.data);
-        this.center = {
-          lat: address.lat,
-          lng: address.lng
-        };
-        this.update = true;
-        this.location.lat = this.center.lat;
-        this.location.lng = this.center.lng;
-        this.location.address = address.address;
-        this.location.location_name = address.title;
-        this.id = address.id;
-        setTimeout(async() => {
+        if(address?.lat){
+          this.center = {
+            lat: address.lat,
+            lng: address.lng
+          };
+          this.update = true;
+          this.location.lat = this.center.lat;
+          this.location.lng = this.center.lng;
+          this.location.address = address.address;
+          this.location.title = address.title;
+          if(!address?.from) this.id = address.id;
+        }
+        if(address.from) this.from = address.from;
           await this.initForm(address);
           this.toggleFetched();
-        }, 3000);
       } else {
         this.update = false;
         this.initForm();
@@ -123,6 +126,7 @@ export class EditAddressPage implements OnInit {
       console.log('address: ', data);
       if(!this.id) await this.addressService.addAddress(data);
       else await this.addressService.updateAddress(this.id, data);
+      this.check = true;
       this.navCtrl.back();
       this.toggleSubmit();
     } catch(e) {
@@ -157,5 +161,11 @@ export class EditAddressPage implements OnInit {
     }
   }
 
+  ionViewDidLeave() {
+    console.log('ionViewDidLeave EditAddressPage');
+    if(this.from == 'home' && !this.check){
+      this.addressService.changeAddress({});
+    }
+  }
 
 }
