@@ -9,6 +9,8 @@ import { Restaurant } from 'src/app/models/restaurant.model';
 import { Category } from 'src/app/models/category.model';
 import { Item } from 'src/app/models/item.model';
 import { element } from 'protractor';
+import { Cart } from 'src/app/models/cart.model';
+import { GlobalService } from 'src/app/services/global/global.service';
 
 @Component({
   selector: 'app-items',
@@ -22,24 +24,23 @@ export class ItemsPage implements OnInit, OnDestroy {
   items: Item[] = [];
   veg: boolean = false;
   isLoading: boolean;
-  cartData: any = {};
-  storedData: any = {};
+  cartData = {} as Cart;
+  storedData = {} as Cart;
   model = {
     icon: 'fast-food-outline',
     title: 'No Menu Available'
   };
-  // restaurants: any[] = [];  
   categories: Category[] = [];
   allItems: Item[] = [];
   cartSub: Subscription;
-  // routeSub: Subscription;
 
   constructor(
     private navCtrl: NavController,
     private route: ActivatedRoute,
     private router: Router,
     private api: ApiService,
-    private cartService: CartService
+    private cartService: CartService,
+    private global: GlobalService
   ) { }
 
   ngOnInit() {    
@@ -54,11 +55,10 @@ export class ItemsPage implements OnInit, OnDestroy {
     });
     this.cartSub = this.cartService.cart.subscribe(cart => {
       console.log('cart items: ', cart);
-      this.cartData = {};
-      this.storedData = {};
+      this.cartData = {} as Cart;
+      this.storedData = {} as Cart;
       if(cart && cart?.totalItem > 0) {
         this.storedData = cart;
-        // this.cartData.items = this.storedData.items;
         this.cartData.totalItem = this.storedData.totalItem;
         this.cartData.totalPrice = this.storedData.totalPrice;
         if(cart?.restaurant?.uid === this.id) {
@@ -80,11 +80,7 @@ export class ItemsPage implements OnInit, OnDestroy {
           else this.items = [...this.allItems];
         }
       } 
-      // else {
-      //   this.storedData = {};
-      //   this.cartData = {};
-
-      // }
+      
     });    
     this.getItems();
   }
@@ -93,25 +89,23 @@ export class ItemsPage implements OnInit, OnDestroy {
     try {      
       this.isLoading = true;
       this.data = {} as Restaurant;
-      this.cartData = {};
-      this.storedData = {};
-      setTimeout(async() => {      
-        // this.categories = this.api.categories;
-        this.allItems = this.api.allItems;
-        let data: any = this.api.restaurants1.filter(x => x.uid === this.id);
-        this.data = data[0];
-        this.categories = this.api.categories.filter(x => x.uid === this.id);
-        this.allItems = this.api.allItems.filter(x => x.uid === this.id);
-        this.allItems.forEach((element, index)=> {
-          this.allItems[index].quantity = 0;
-        })
-        this.items = [...this.allItems];
-        console.log('restaurant: ', this.data);
-        await this.cartService.getCartData();
-        this.isLoading = false;
-      }, 3000);
+      this.cartData = {} as Cart;
+      this.storedData = {} as Cart;
+      this.data = await this.api.getRestaurantById(this.id);
+      this.categories = await this.api.getRestaurantCategories(this.id);
+      this.allItems = await this.api.getRestaurantMenu(this.id);
+      this.items = [...this.allItems];
+      console.log('items: ', this.items);
+      console.log('restaurant: ', this.data);
+      await this.cartService.getCartData();
+      this.isLoading = false;
+      // this.allItems.forEach((element, index) => {
+        //     this.allItems[index].quantity = 0;
+        //   });
     } catch(e) {
       console.log(e);
+      this.isLoading = false;
+      this.global.errorToast();
     }
   }
 
@@ -146,7 +140,7 @@ export class ItemsPage implements OnInit, OnDestroy {
 
   saveToCart() {
     try {
-      this.cartData.restaurant = {};
+      this.cartData.restaurant = {} as Restaurant;
       this.cartData.restaurant = this.data;
       console.log('save cartData: ', this.cartData);
       this.cartService.saveCart();
@@ -162,10 +156,15 @@ export class ItemsPage implements OnInit, OnDestroy {
     this.router.navigate([this.router.url + '/cart']);
   }
 
+  checkItemCategory(id) {
+    const item = this.items.find(x => x.category_id.id == id);
+    if(item) return true;
+    return false;
+  }
+
   async ionViewWillLeave() {
     console.log('ionViewWillLeave ItemsPage');
     if(this.cartData?.items && this.cartData?.items.length > 0) await this.saveToCart();
-    // if(this.routeSub) this.routeSub.unsubscribe();
   }
 
   ngOnDestroy() {

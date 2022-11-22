@@ -15,7 +15,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   map: any;
   marker: any;
   @Input() update = false;
-  @Input() center = { lat: 28.649944693035188, lng: 77.23961776224988 };
+  @Input() center = { lat: 40.482100503948004, lng: -3.674043485955176 };
   @Output() location: EventEmitter<any> = new EventEmitter();
   mapListener: any;
   mapChange: Subscription;
@@ -56,7 +56,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     } catch(e) {
       console.log(e);
-      this.center = { lat: 28.649944693035188, lng: 77.23961776224988 };
+      this.center = { lat: 40.482100503948004, lng: -3.674043485955176 };
       console.log(this.center);
       this.loadMap();
       this.getAddress(this.center.lat, this.center.lng);

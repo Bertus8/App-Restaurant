@@ -51,7 +51,9 @@ export class LoginPage implements OnInit {
     this.isLogin = true;
     this.authService.login(form.value.email, form.value.password).then(data => {
       console.log(data);
-      this.navigate();
+      let url = '/tabs';
+      if(data == 'admin') url = '/admin';
+      this.navigate(data);
       this.isLogin = false;
       form.reset();
     })
@@ -65,7 +67,9 @@ export class LoginPage implements OnInit {
     });
   }
 
-  navigate() {
+  navigate(data?, url?) {
+    this.router.navigateByUrl('/tabs');
+    if(data == 'admin') url = "/admin";
     this.router.navigateByUrl('/tabs');
   }
 

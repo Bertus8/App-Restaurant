@@ -24,57 +24,70 @@ export class HomePage implements OnInit, OnDestroy {
   addressSub: Subscription;
 
   constructor(
+    private router: Router,
     private api: ApiService,
     private addressService: AddressService,
     private global: GlobalService,
     private locationService: LocationService,
-    private router: Router,
     private mapService: GoogleMapsService
   ) { }
 
   ngOnInit() {
     this.addressSub = this.addressService.addressChange.subscribe(address => {
       console.log('address', address);
-      if(address && address?.lat){
+      if(address && address?.lat) {
         if(!this.isLoading) this.isLoading = true;
         this.location = address;
         // this.nearbyApiCall(address.lat, address.lng);
         this.nearbyApiCall();
       } else {
-        if(address && (!this.location || !this.location?.lat)){
+        if(address && (!this.location || !this.location?.lat)) {
           this.searchLocation('home', 'home-modal');
         }
       }
     }, e => {
-        console.log(e);
-        this.isLoading = false;
-        this.global.errorToast();
+      console.log(e);
+      this.isLoading = false; 
+      this.global.errorToast();
     });
     this.isLoading = true;
     this.getBanners();
     if(!this.location?.lat) {
       this.getNearbyRestaurants();
-    }
+    }   
   }
 
   getBanners() {
-    this.banners = this.api.banners;
+    this.api.getBanners().then(data => {
+      console.log(data);
+      this.banners = data;
+    })
+    .catch(e => {
+      console.log(e);
+    })
   }
 
-  nearbyApiCall() {
-    console.log(this.location)
-    this.isLoading = false;
-    this.restaurants = this.api.restaurants;
+  async nearbyApiCall() {
+    try {
+      console.log(this.location);
+      this.restaurants = await this.api.getNearbyRestaurants(this.location.lat, this.location.lng);
+      console.log(this.restaurants);
+      this.isLoading = false;
+    } catch(e) {
+      // set isLoading to false
+      console.log(e);
+      this.global.errorToast();
+    }
   }
 
- async getNearbyRestaurants() {
+  async getNearbyRestaurants() {
     try {
       const position = await this.locationService.getCurrentLocation();
+      console.log('get nearby restaurants', position);
       const { latitude, longitude } = position.coords;
       const address = await this.mapService.getAddress(latitude, longitude);
-      if(address){
+      if(address) {
         this.location = new Address(
-          '',
           '',
           address.address_components[0].short_name,
           address.formatted_address,
@@ -87,7 +100,7 @@ export class HomePage implements OnInit, OnDestroy {
       }
       console.log('restaurants: ', this.restaurants);
       this.isLoading = false;
-    } catch (e) {
+    } catch(e) {
       console.log(e);
       this.isLoading = false;
       this.searchLocation('home', 'home-modal');
@@ -97,12 +110,9 @@ export class HomePage implements OnInit, OnDestroy {
   async getData() {
     try {
       this.restaurants = [];
-      // const address = await this.addressService.checkExistAddress(lat, lng, this.location);
-      const address = await this.addressService.checkExistAddress(this.location);
-      console.log('address exist: ', address)
-      // if(!address) await this.nearbyApiCall(lat, lng);
-    } catch (e) {
-      console.log(e)
+      await this.addressService.checkExistAddress(this.location);
+    } catch(e) {
+      console.log(e);
       this.global.errorToast();
     }
   }
@@ -111,26 +121,25 @@ export class HomePage implements OnInit, OnDestroy {
     try {
       const options = {
         component: SearchLocationComponent,
-        cssClass: className ? className: '',
+        cssClass: className ? className : '',
         backdropDismiss: prop == 'select-place' ? true : false,
-        componentProps:{
+        componentProps: {
           from: prop
         }
       };
       const modal = await this.global.createModal(options);
-      if(modal){
+      if(modal) {
         if(modal == 'add') {
           this.addAddress(this.location);
-        }
-       else if(modal == 'select') {
+        } else if(modal == 'select') {
           this.searchLocation('select-place');
         } else {
           this.location = modal;
           await this.getData();
         }
       }
-    } catch (e) {
-      console.log(e)
+    } catch(e) {
+      console.log(e);
     }
   }
 
@@ -151,8 +160,8 @@ export class HomePage implements OnInit, OnDestroy {
     this.router.navigate(['/', 'tabs', 'address', 'edit-address'], navData);
   }
 
-  ngOnDestroy(): void {
-      if(this.addressSub) this.addressSub.unsubscribe();
+  ngOnDestroy() {
+    if(this.addressSub) this.addressSub.unsubscribe();
   }
 
 }

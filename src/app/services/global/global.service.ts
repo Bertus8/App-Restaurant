@@ -48,7 +48,7 @@ export class GlobalService {
   }
 
   showLoader(msg?, spinner?) {
-    //this.isLoading = true;
+    this.isLoading = true;
     if(!this.isLoading) this.setLoader();
     return this.loadingCtrl.create({
       message: msg,

@@ -27,7 +27,7 @@ export class SignupPage implements OnInit {
       this.global.showLoader();
       const val = await this.authService.getId();
       console.log(val);
-      if(val) this.navigate();
+      if(val) this.navigate('/tabs');
       this.global.hideLoader();
     } catch(e) {
       console.log(e);
@@ -43,8 +43,9 @@ export class SignupPage implements OnInit {
   register(form: NgForm) {
     this.isLoading = true;
     console.log(form.value);
-    this.authService.register(form.value).then(() => {
-      this.navigate();
+    this.authService.register(form.value).then((data) => {
+      console.log(data);
+      this.navigate(data.type);
       this.isLoading = false;
       form.reset();
     })
@@ -59,8 +60,10 @@ export class SignupPage implements OnInit {
     });
   }
 
-  navigate() {
-    this.router.navigateByUrl('/tabs');
+  navigate(type?) {
+    let url = '/tabs';
+    if(type == 'admin') url = "admin";
+    this.router.navigateByUrl(url);
   }
 
 }

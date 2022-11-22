@@ -26,7 +26,6 @@ export class ForgotPasswordPage implements OnInit {
     if(!form.valid) return;
     this.isLoading = true;
     this.auth.resetPassword(form.value.email).then((data) => {
-      console.log(data);
       this.global.successToast('Reset Password Link is sent to your Email Address');
       this.isLoading = false;
       this.navCtrl.back();

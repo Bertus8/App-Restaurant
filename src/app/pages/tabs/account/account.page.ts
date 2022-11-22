@@ -1,7 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { NavController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { EditProfileComponent } from 'src/app/components/edit-profile/edit-profile.component';
 import { Order } from 'src/app/models/order.model';
+import { AuthService } from 'src/app/services/auth/auth.service';
 import { CartService } from 'src/app/services/cart/cart.service';
 import { GlobalService } from 'src/app/services/global/global.service';
 import { OrderService } from 'src/app/services/order/order.service';
@@ -24,7 +26,9 @@ export class AccountPage implements OnInit, OnDestroy {
     private orderService: OrderService,
     private cartService: CartService,
     private global: GlobalService,
-    private profileService: ProfileService
+    private profileService: ProfileService,
+    private authService: AuthService,
+    private navCtrl: NavController
     ) { }
 
   ngOnInit() {
@@ -43,18 +47,25 @@ export class AccountPage implements OnInit, OnDestroy {
 
   async getData() {
     this.isLoading = true;
-    setTimeout(async() => {
-      this.profile = {      
-        name: 'Nikhil Agarwal',
-        phone: '9109109100',
-        email: 'technyks@gmail.com'  
-      };
+
+      await this.profileService.getProfile();
       await this.orderService.getOrders();
       this.isLoading = false;      
-    }, 3000);
-  }
+    }
+  
 
-  logout() {}
+  logout() {
+    this.global.showLoader();
+      this.authService.logout().then(() => {
+      this.navCtrl.navigateRoot('/login');
+      this.global.hideLoader();
+    })
+    .catch(e=> {
+      console.log(e);
+      this.global.hideLoader();
+      this.global.errorToast('Logout Failed!!');
+    })
+  }
 
   async reorder(order: Order) {
     console.log(order);

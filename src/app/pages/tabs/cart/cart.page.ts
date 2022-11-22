@@ -38,18 +38,19 @@ export class CartPage implements OnInit, OnDestroy {
     private addressService: AddressService
   ) { }
 
- async ngOnInit() {
+  async ngOnInit() {
     await this.getData();
-    this.addressSub = this.addressService.addressChange.subscribe(async (address) =>{
+    this.addressSub = this.addressService.addressChange.subscribe(async (address) => {
       console.log('location cart: ', address);
       this.location = address;
       if(this.location?.id && this.location?.id != '') {
-        const radius = this.addressService.radius;
+        const radius = this.orderService.getRadius();
         const result = await this.cartService.checkCart(this.location.lat, this.location.lng, radius);
         console.log(result);
         if(result) {
-          this.global.errorToast('Your location is too far from the restaurant in the cart, kindly search from some other restaurant',
-          5000);
+          this.global.errorToast(
+            'Your location is too far from the restaurant in the cart, kindly search from some other restaurant nearby.',
+            5000);
           this.cartService.clearCart();
         }
       }
@@ -58,26 +59,12 @@ export class CartPage implements OnInit, OnDestroy {
       console.log('cart page: ', cart);
       this.model = cart;
       if(!this.model) this.location = {} as Address;
-    })
+      console.log('cart page model: ', this.model);
+    });
   }
 
   async getData() {
     await this.checkUrl();
-    /*this.location = {
-      lat: 28.653831, 
-      lng: 77.188257, 
-      address: 'Karol Bagh, New Delhi'
-    } as Address;*/
-    this.location = new Address(
-      'address1',
-      'user1',
-      'Address 1',
-      'Karol Bagh, New Delhi',
-      '',
-      '',
-      28.653831, 
-      77.188257, 
-    )
     await this.cartService.getCartData();
   }
 
@@ -127,26 +114,27 @@ export class CartPage implements OnInit, OnDestroy {
         swipeToClose: true,
         cssClass: 'custom-modal',
         componentProps: {
-          from:'cart'
+          from: 'cart'
         }
       };
       const address = await this.global.createModal(options);
       if(address) {
-          if(address == 'add') this.addAddress();
+        if(address == 'add') this.addAddress();
         await this.addressService.changeAddress(address);
       }
-    } catch (e) {
+    } catch(e) {
       console.log(e);
     }
   }
 
   async makePayment() {
     try {
-      const data: Order = {
+      console.log('model: ', this.model);
+      const data = {
         restaurant_id: this.model.restaurant.uid,
         instruction: this.instruction ? this.instruction : '',
         restaurant: this.model.restaurant,
-        order:(this.model.items),// JSON.stringify
+        order: this.model.items, //JSON.stringify(this.model.items)
         time: moment().format('lll'),
         address: this.location,
         total: this.model.totalPrice,
@@ -178,7 +166,7 @@ export class CartPage implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
+  ngOnDestroy() {
     console.log('Destroy CartPage');
     if(this.addressSub) this.addressSub.unsubscribe();
     if(this.cartSub) this.cartSub.unsubscribe();
