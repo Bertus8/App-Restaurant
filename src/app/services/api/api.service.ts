@@ -11,14 +11,12 @@ import 'firebase/compat/firestore';
 import * as geofirestore from 'geofirestore';
 
 
-
-
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
 
-  radius = 20;// in km
+  radius = 200;// in km
   firestore = firebase.firestore();
   GeoFirestore = geofirestore.initializeApp(this.firestore);
 

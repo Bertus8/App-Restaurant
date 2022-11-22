@@ -13,24 +13,24 @@ export class AuthService {
     private storage: StorageService,
     private fireAuth: AngularFireAuth,
     private apiService: ApiService
-    ) { }
+  ) { }
 
-    async login(email: string, password: string): Promise<any> {
-      try {
-        const response = await this.fireAuth.signInWithEmailAndPassword(email, password);
-        console.log(response);
-        if(response.user) {
-          this.setUserData(response.user.uid);
-          const user: any = await this.getUserData(response.user.uid);
-          return user.type;                
-        }
-      } catch(e) {
-        throw(e);
+  async login(email: string, password: string): Promise<any> {
+    try {
+      const response = await this.fireAuth.signInWithEmailAndPassword(email, password);
+      console.log(response);
+      if(response.user) {
+        this.setUserData(response.user.uid);
+        const user: any = await this.getUserData(response.user.uid);
+        return user.type;                
       }
+    } catch(e) {
+      throw(e);
     }
+  }
 
   async getId() {
-    return (await this.storage.getStorage('uid')).value
+    return (await this.storage.getStorage('uid')).value;
   }
 
   setUserData(uid) {
@@ -65,17 +65,17 @@ export class AuthService {
 
   async resetPassword(email: string) {
     try {
-      await this.fireAuth.sendPasswordResetEmail(email)     
-    } catch (e) {
+      await this.fireAuth.sendPasswordResetEmail(email);
+    } catch(e) {
       throw(e);
     }
   }
 
   async logout() {
     try {
-      await this.storage.removeStorage('uid');
-      return this.fireAuth.signOut();
-    } catch (e) {
+      await this.fireAuth.signOut();
+      return this.storage.removeStorage('uid');
+    } catch(e) {
       throw(e);
     }
   }
@@ -84,7 +84,7 @@ export class AuthService {
     try {
       const result = await this.fireAuth.signInWithEmailAndPassword(oldEmail, password);
       await result.user.updateEmail(newEmail);
-    } catch (e) {
+    } catch(e) {
       console.log(e);
       throw(e);
     }
@@ -94,16 +94,18 @@ export class AuthService {
     return new Promise((resolve, reject) => {
       this.fireAuth.onAuthStateChanged(user => {
         console.log('auth user: ', user);
-        if(user) {
-          this.setUserData(user.uid);
-          resolve(user.uid);
-        } else {
-          this.logout();
-          reject(false);
-        }
+        resolve(user)
+        // if(user) {
+        //   this.setUserData(user.uid);         
+        //   resolve(user.uid);
+        // } else {
+        //   // this.logout();
+        //   reject(false);
+        // }
       });
     });
-  } 
+  }
+
   async checkUserAuth() {
     try {
       const user = await this.checkAuth();
@@ -124,3 +126,4 @@ export class AuthService {
     return (await (this.apiService.collection('users').doc(id).get().toPromise())).data();
   }
 }
+

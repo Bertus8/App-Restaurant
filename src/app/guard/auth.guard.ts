@@ -15,37 +15,67 @@ export class AuthGuard implements CanLoad {
     private profileService: ProfileService
     ) {}
 
-  canLoad(
-    route: Route,
-    segments: UrlSegment[]): Observable<boolean> | Promise<boolean> | boolean {
-    return this.authService.checkAuth().then(id => {
-      console.log('auth guard cheking id: ', id);
-      if(id) {
-        //get profile
-        this.profileService.getProfile().then(profile => {
-          console.log('user profile', profile);
-        if(profile && profile?.type == 'user'){
-          this.router.navigateByUrl('/tabs/home');
-            return true;
-        } else if (profile && profile?.type == 'admin'){
-          this.router.navigateByUrl('/admin');
-          return false;
+    async canLoad(
+      route: Route,
+      segments: UrlSegment[]): Promise<boolean> {
+        const roleType = route.data.type;
+        try {
+          const type = await this.authService.checkUserAuth();
+          if(type) {
+            if(type == roleType) return true;
+            else {
+              let url = '/tabs';
+              if(type == 'admin') url = '/admin';
+              this.navigate(url);
+            }
           } else {
-            this.authService.logout();
-            this.router.navigateByUrl('/login');
-            return false;
+            this.checkForAlert(roleType);
           }
-        }).catch(e => {
+        } catch(e) {
           console.log(e);
-          this.authService.logout();
-          this.router.navigateByUrl('/login');
-          return false;
-        });
-        return true;
-    }})
-  }
+          this.checkForAlert(roleType);
+        }
+    }
+  
     navigate(url) {
-    this.router.navigateByUrl(url, {replaceUrl: true});
-    return false;
+      this.router.navigateByUrl(url, {replaceUrl: true});
+      return false;
+    }
+  
+    async checkForAlert(roleType) {
+      const id = await this.authService.getId();
+      if(id) {
+        // check network
+        console.log('alert: ', id);
+        this.showAlert(roleType);
+      } else {
+        this.authService.logout();
+        this.navigate('/login');
+      }
+    }
+  
+    showAlert(role) {
+      /*this.alertCtrl.create({
+        header: 'Authentication Failed',
+        message: 'Please check your Internet Connectivity and tr again',
+        buttons: [
+          {
+            text: 'Logout',
+            handler: () => {
+              this.authService.logout();
+              this.navigate('/login');
+            }
+          },
+          {
+            text: 'Retry',
+            handler: () => {
+              let url = '/tabs';
+              if(role == 'admin') url = '/admin';
+              this.navigate(url);
+            }
+          }
+        ]
+      })
+      .then(alertEl => alertEl.present());*/
+    }
   }
-}
