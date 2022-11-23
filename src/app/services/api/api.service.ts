@@ -132,8 +132,7 @@ export class ApiService {
 
   async getRestaurantById(id): Promise<any> {
     try {
-      const restaurant = (await (this.collection('restaurants').doc(id).get().toPromise())).data();
-      console.log(restaurant);
+      const restaurant = (await (this.collection('restaurants').doc(id).get().toPromise())).data();      console.log(restaurant);
       return restaurant;
     } catch(e) {
       throw(e);

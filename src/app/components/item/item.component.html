@@ -1,8 +1,8 @@
 <ion-item>
-  <ion-thumbnail slot="start">
-    <img [src]="item?.cover ? item.cover : 'assets/imgs/1.jpg'" />
+  <ion-thumbnail class="ion-margin-bottom" slot="start">
+    <img [src]="item?.cover ? item?.cover : fallbackImage" onerror="this.onerror=null;this.src=fallbackImage" />
   </ion-thumbnail>
-  <ion-label>
+  <ion-label class="ion-text-wrap">
     <!-- <h4>{{item?.name}}</h4> -->
     {{item?.name}}
     <p class="ion-text-wrap">{{item?.desc}}</p>

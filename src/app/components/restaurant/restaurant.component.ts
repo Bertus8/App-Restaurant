@@ -8,6 +8,7 @@ import { Restaurant } from 'src/app/models/restaurant.model';
 })
 export class RestaurantComponent implements OnInit {
 
+  fallbackImage = 'assets/imgs/1.jpg';
   @Input() restaurant: Restaurant;
 
   constructor() { }
@@ -16,6 +17,10 @@ export class RestaurantComponent implements OnInit {
 
   getCuisine(cuisine) {
     return cuisine.join(', ');
+  }
+
+  onImgError(event) {
+    event.target.src = this.fallbackImage;
   }
 
 }

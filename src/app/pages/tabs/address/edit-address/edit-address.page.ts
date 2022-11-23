@@ -131,6 +131,7 @@ export class EditAddressPage implements OnInit {
       this.toggleSubmit();
     } catch(e) {
       console.log(e);
+      this.isSubmitted = false;
       this.global.errorToast();
     }
 

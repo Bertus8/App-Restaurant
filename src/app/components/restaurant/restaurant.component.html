@@ -1,6 +1,6 @@
 <ion-item lines="none">
   <ion-thumbnail slot="start">
-    <img alt="food" [src]="restaurant?.cover ? restaurant.cover : 'assets/imgs/1.jpg'" />
+    <img [src]="restaurant?.cover ? restaurant.cover : fallbackImage"  (error)="onImgError($event)" />
   </ion-thumbnail>
   <ion-label>
     <h4>{{restaurant?.name}}</h4>

@@ -209,9 +209,8 @@ export class CartService {
         distance = this.getDistanceFromLatLngInKm(
           lat1, 
           lng1, 
-         // this.model.restaurant.latitude, 
-         // this.model.restaurant.longitude);
-         lat1, lng1
+          this.model.restaurant.g.geopoint.latitude, 
+          this.model.restaurant.g.geopoint.longitude
         );
           console.log('distance: ',distance);
           if(distance > radius) {
