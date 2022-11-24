@@ -1,4 +1,6 @@
 import { AfterContentChecked, Component, Input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { Banner } from 'src/app/models/banner.model';
 // import Swiper core and required modules
 import SwiperCore, { Keyboard, Pagination, SwiperOptions } from 'swiper';
 
@@ -12,10 +14,10 @@ SwiperCore.use([Pagination, Keyboard]);
 })
 export class BannerComponent implements OnInit, AfterContentChecked {
 
-  @Input() bannerImages: any[];
+  @Input() bannerImages: Banner[];
   config: SwiperOptions = {};
 
-  constructor() { }
+  constructor(private router: Router) { }
 
   ngOnInit() {}
 
@@ -28,5 +30,14 @@ export class BannerComponent implements OnInit, AfterContentChecked {
       // centeredSlides: true
     };
   }
+
+  goToRestaurant(data) {
+    console.log(data);
+    if(data?.res_id) {
+      this.router.navigate(['/', 'tabs', 'restaurants', data.res_id]);
+    }
+
+  }
+
 
 }

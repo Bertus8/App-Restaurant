@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Strings } from 'src/app/enum/strings';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { GlobalService } from 'src/app/services/global/global.service';
 
@@ -19,10 +20,9 @@ export class SignupPage implements OnInit {
     private global: GlobalService) { }
 
   ngOnInit() {
-    this.isLoggedIn();
   }
 
-  async isLoggedIn() {
+ /* async isLoggedIn() {
     try {
       this.global.showLoader();
       const val = await this.authService.getId();
@@ -33,7 +33,7 @@ export class SignupPage implements OnInit {
       console.log(e);
       this.global.hideLoader();
     }
-  }
+  } */
 
   onSubmit(form: NgForm) {
     if(!form.valid) return;
@@ -61,8 +61,8 @@ export class SignupPage implements OnInit {
   }
 
   navigate(type?) {
-    let url = '/tabs';
-    if(type == 'admin') url = "admin";
+    let url = Strings.TABS;
+    if(type == 'admin') url = Strings.ADMIN;
     this.router.navigateByUrl(url);
   }
 

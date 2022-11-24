@@ -9,6 +9,7 @@ import { switchMap } from 'rxjs/operators';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 import * as geofirestore from 'geofirestore';
+import { Banner } from 'src/app/models/banner.model';
 
 
 @Injectable({
@@ -49,8 +50,16 @@ export class ApiService {
   async addBanner(data) {
     try {
       const id = this.randomString();
-      data.id = id;
+     // data.id = id;
+     const bannerData = new Banner(
+      id,
+      data.banner,
+      data.status,
+     );
+     let banner = Object.assign({}, bannerData);
+     delete banner.res_id;
       await this.collection('banners').doc(id).set(data);
+      return true;
     } catch(e) {
       console.log(e);
       throw(e);
@@ -59,7 +68,7 @@ export class ApiService {
 
   async getBanners() {
     try {
-      const banners = await this.collection('banners').get().pipe(
+      const banners: Banner[] = await this.collection('banners').get().pipe(
         switchMap(async(data: any) => {
           let bannerData = await data.docs.map(element => {
             const item = element.data();

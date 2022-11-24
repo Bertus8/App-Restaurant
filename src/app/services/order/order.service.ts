@@ -56,6 +56,7 @@ export class OrderService {
       .toPromise(); 
       console.log('orders', orders);
       this._orders.next(orders);
+      return orders;
     } catch(e) {
       throw(e);
     }
@@ -91,6 +92,7 @@ export class OrderService {
       currentOrders = currentOrders.concat(this._orders.value);
       console.log('orders: ', currentOrders);
       this._orders.next(currentOrders);
+      return currentOrders;
     } catch(e) {
       throw(e);
     }

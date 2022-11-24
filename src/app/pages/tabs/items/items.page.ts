@@ -43,8 +43,17 @@ export class ItemsPage implements OnInit, OnDestroy {
     private global: GlobalService
   ) { }
 
-  ngOnInit() {    
-    this.route.paramMap.pipe(take(1)).subscribe(paramMap => {
+  ngOnInit() {
+    const id = this.route.snapshot.paramMap.get('restaurantId');
+    console.log('check id: ', id);
+    if(!id) {
+      this.navCtrl.back();
+      return;
+    }
+    this.id = id;
+    console.log('id: ', this.id);
+
+    /*this.route.paramMap.pipe(take(1)).subscribe(paramMap => {
       console.log('route data: ', paramMap);
       if(!paramMap.has('restaurantId')) {
         this.navCtrl.back();
@@ -52,7 +61,7 @@ export class ItemsPage implements OnInit, OnDestroy {
       }
       this.id = paramMap.get('restaurantId');
       console.log('id: ', this.id);
-    });
+    });*/
     this.cartSub = this.cartService.cart.subscribe(cart => {
       console.log('cart items: ', cart);
       this.cartData = {} as Cart;
@@ -62,11 +71,18 @@ export class ItemsPage implements OnInit, OnDestroy {
         this.cartData.totalItem = this.storedData.totalItem;
         this.cartData.totalPrice = this.storedData.totalPrice;
         if(cart?.restaurant?.uid === this.id) {
-          this.allItems.forEach(element => {
-            cart.items.forEach(element2 => {
-              if(element.id != element2.id) return;
+          this.allItems.forEach(element => { // item 1
+            let qty = false;
+            cart.items.forEach(element2 => { // item 1, item 2
+              if(element.id != element2.id) {
+               // if((cart?.from && cart?.from == 'cart') && element?.quantity) element.quantity = 0;
+                return;
+              }
               element.quantity = element2.quantity;
+              qty = true;
             });
+            console.log(`element check (${qty}): `, element?.name + ' | ' + element?.quantity);
+            if(!qty && element?.quantity) element.quantity = 0;
           });
           console.log('allitems: ', this.allItems);
           this.cartData.items = this.allItems.filter(x => x.quantity > 0);
@@ -79,7 +95,13 @@ export class ItemsPage implements OnInit, OnDestroy {
           if(this.veg == true) this.items = this.allItems.filter(x => x.veg === true);
           else this.items = [...this.allItems];
         }
-      } 
+      } else {
+        this.allItems.forEach(element => {            
+          element.quantity = 0;
+      });
+      if(this.veg == true) this.items = this.allItems.filter(x => x.veg === true);
+      else this.items = [...this.allItems];
+      }
       
     });    
     this.getItems();

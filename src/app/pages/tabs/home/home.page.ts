@@ -137,6 +137,11 @@ export class HomePage implements OnInit, OnDestroy {
           this.location = modal;
           await this.getData();
         }
+      } else {
+        console.log('location value: ', this.location );
+        if (!this.location || !this.location?.lat) {
+          this.searchLocation('home', 'home-modal');
+        }
       }
     } catch(e) {
       console.log(e);

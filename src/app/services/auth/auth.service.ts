@@ -3,11 +3,30 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { StorageService } from '../storage/storage.service';
 import { User } from 'src/app/models/user.model';
 import { ApiService } from '../api/api.service';
+import { Strings } from 'src/app/enum/strings';
+import { BehaviorSubject } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+export class AuthUserId {
+  constructor(public uid: string) {}
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+
+  static UNKNOWN_USER = null;
+  private _uid = new BehaviorSubject<AuthUserId>(AuthService.UNKNOWN_USER);
+
+ /* get userId() {
+    return this._uid.asObservable().pipe(map(uid => {
+        console.log(uid);
+        if(uid) return uid;
+        else return AuthService.UNKNOWN_USER;
+      })
+    );
+  }*/
 
   constructor(
     private storage: StorageService,
@@ -30,11 +49,18 @@ export class AuthService {
   }
 
   async getId() {
-    return (await this.storage.getStorage('uid')).value;
+    const user = this._uid.value;
+    console.log('auth user id: ', user?.uid);
+    if(user?.uid) {
+      return user.uid;
+    } else {
+      return (await this.storage.getStorage(Strings.UID)).value;
+    }
   }
 
   setUserData(uid) {
-    this.storage.setStorage('uid', uid);
+    this.storage.setStorage(Strings.UID, uid);
+    this._uid.next(new AuthUserId(uid));
   }
 
   async register(formValue, type?) {
@@ -74,7 +100,8 @@ export class AuthService {
   async logout() {
     try {
       await this.fireAuth.signOut();
-      return this.storage.removeStorage('uid');
+      this._uid.next(AuthService.UNKNOWN_USER);
+      return this.storage.removeStorage(Strings.UID);
     } catch(e) {
       throw(e);
     }

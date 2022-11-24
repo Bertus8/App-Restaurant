@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { CanLoad, Route, Router, UrlSegment, UrlTree } from '@angular/router';
+import { AlertController } from '@ionic/angular';
 import { Observable } from 'rxjs';
-import { AuthService } from '../services/auth/auth.service';
-import { ProfileService } from '../services/profile/profile.service';
+import { Strings } from 'src/app/enum/strings';
+import { AuthService } from '../../services/auth/auth.service';
+import { ProfileService } from '../../services/profile/profile.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +14,7 @@ export class AuthGuard implements CanLoad {
   constructor(
     private authService: AuthService, 
     private router: Router,
-    private profileService: ProfileService
+    private alertCtrl: AlertController
     ) {}
 
     async canLoad(
@@ -24,8 +26,8 @@ export class AuthGuard implements CanLoad {
           if(type) {
             if(type == roleType) return true;
             else {
-              let url = '/tabs';
-              if(type == 'admin') url = '/admin';
+              let url = Strings.TABS;
+              if(type == 'admin') url = Strings.ADMIN;
               this.navigate(url);
             }
           } else {
@@ -50,12 +52,12 @@ export class AuthGuard implements CanLoad {
         this.showAlert(roleType);
       } else {
         this.authService.logout();
-        this.navigate('/login');
+        this.navigate(Strings.LOGIN);
       }
     }
   
     showAlert(role) {
-      /*this.alertCtrl.create({
+      this.alertCtrl.create({
         header: 'Authentication Failed',
         message: 'Please check your Internet Connectivity and tr again',
         buttons: [
@@ -63,19 +65,19 @@ export class AuthGuard implements CanLoad {
             text: 'Logout',
             handler: () => {
               this.authService.logout();
-              this.navigate('/login');
+              this.navigate(Strings.LOGIN);
             }
           },
           {
             text: 'Retry',
             handler: () => {
-              let url = '/tabs';
-              if(role == 'admin') url = '/admin';
+              let url = Strings.TABS;
+              if(role == 'admin') url = Strings.ADMIN;
               this.navigate(url);
             }
           }
         ]
       })
-      .then(alertEl => alertEl.present());*/
+      .then(alertEl => alertEl.present());
     }
   }

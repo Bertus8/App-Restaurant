@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Strings } from 'src/app/enum/strings';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { GlobalService } from 'src/app/services/global/global.service';
 
@@ -21,20 +22,6 @@ export class LoginPage implements OnInit {
   constructor(private authService: AuthService, private router: Router, private global: GlobalService ) { }
 
   ngOnInit() {
-    this.isLoggedIn();
-  }
-
-  async isLoggedIn() {
-    try {
-      this.global.showLoader();
-      const val = await this.authService.getId();
-      console.log(val);
-      if(val) this.navigate();
-      this.global.hideLoader();
-    } catch(e) {
-      console.log(e);
-      this.global.hideLoader();
-    }
   }
 
   changeType() {
@@ -51,8 +38,8 @@ export class LoginPage implements OnInit {
     this.isLogin = true;
     this.authService.login(form.value.email, form.value.password).then(data => {
       console.log(data);
-      let url = '/tabs';
-      if(data == 'admin') url = '/admin';
+      let url = Strings.TABS;
+      if(data == 'admin') url = Strings.ADMIN;
       this.navigate(data);
       this.isLogin = false;
       form.reset();
@@ -67,10 +54,10 @@ export class LoginPage implements OnInit {
     });
   }
 
-  navigate(data?, url?) {
-    this.router.navigateByUrl('/tabs');
-    if(data == 'admin') url = "/admin";
-    this.router.navigateByUrl('/tabs');
+  navigate(data?) {
+    let url = Strings.TABS
+    if(data == 'admin') url = Strings.ADMIN;
+    this.router.navigateByUrl(url);
   }
 
 }
